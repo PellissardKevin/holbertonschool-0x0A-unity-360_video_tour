@@ -64,3 +64,10 @@ Requirements for Unity projects
     In your scripts, all your public classes and their members should have XML documentation tags
     In your scripts, all your private classes and members should be documented but without XML documentation tags
 
+Credits
+
+    Music: Tech Live by Kevin MacLeod
+
+    Free download: https://filmmusic.io/song/4463-tech-live
+
+    Licensed under CC BY 4.0: https://filmmusic.io/standard-license

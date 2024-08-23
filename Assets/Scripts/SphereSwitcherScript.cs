@@ -1,26 +1,41 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.Video;
 
-public class SphereSwitcher : MonoBehaviour
+public class VideoManager : MonoBehaviour
 {
-    public GameObject[] spheres;  // Tableau contenant toutes les sphères
-    public Transform cameraTransform;  // Référence à la caméra
-    private int currentSphereIndex = 0;  // Index de la sphère actuellement active
+    public Animator fadeAnim;
 
-    public void SwitchSphere(int sphereIndex)
+    public void ChangeSphere(GameObject destination)
     {
-        if (sphereIndex >= 0 && sphereIndex < spheres.Length)
-        {
-            // Désactiver la sphère actuelle
-            spheres[currentSphereIndex].SetActive(false);
+        GameObject currentSphere = FindObjectOfType<VideoPlayer>().gameObject;
+        StartCoroutine(StartNextVideo(currentSphere, destination));
+    }
 
-            // Activer la nouvelle sphère
-            spheres[sphereIndex].SetActive(true);
+    /* Coroutine to load the next video during the transition animation. */
+    private IEnumerator StartNextVideo(GameObject currentSphere, GameObject destination)
+    {
+        VideoPlayer videoPlayer = destination.GetComponentInChildren<VideoPlayer>();
 
-            // Déplacer la caméra au centre de la nouvelle sphère active
-            cameraTransform.position = spheres[sphereIndex].transform.position;
+        fadeAnim.SetTrigger("FadeIn");
+        yield return new WaitForSeconds(1f);
+        destination.SetActive(true);
+        transform.position = destination.transform.position;
+        while (!videoPlayer.isPlaying)
+            yield return null;
+        ActivateCanvas(currentSphere, destination.GetComponentInChildren<Canvas>());
+    }
 
-            // Mettre à jour l'index courant
-            currentSphereIndex = sphereIndex;
-        }
+    /* Activates the canvas of the current sphere. */
+    private void ActivateCanvas(GameObject currentSphere, Canvas destinationCanvas)
+    {
+        GameObject[] informations = GameObject.FindGameObjectsWithTag("Informations");
+
+        currentSphere.SetActive(false);
+
+        foreach (GameObject infoBubble in informations)
+            infoBubble.SetActive(false);
+
+        destinationCanvas.enabled = true;
     }
 }
